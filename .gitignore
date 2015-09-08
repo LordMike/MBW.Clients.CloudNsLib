@@ -1,6 +1,7 @@
 *.user
 [Bb]in
 [Dd]ebug*/
+obj/
 
 packages/
 *.suo

@@ -55,7 +55,59 @@ namespace CloudNsLib.Client
             return status.Status == "Success";
         }
 
-        public async Task<bool> RecordsAddA(string domainName, string host, int ttl, IPAddress address)
+        public async Task<bool> RecordsAlterA(string domainName, int recordId, string host, int ttl, IPAddress address)
+        {
+            NameValueCollection nvc = CreateUri();
+
+            nvc["domain-name"] = domainName;
+            nvc["record-id"] = recordId.ToString();
+            nvc["host"] = host;
+            nvc["ttl"] = ttl.ToString();
+            nvc["record"] = address.ToString();
+
+            if (address.AddressFamily == AddressFamily.InterNetwork)
+                nvc["record-type"] = RecordType.A.ToString();
+            else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                nvc["record-type"] = RecordType.AAAA.ToString();
+            else
+                throw new ArgumentException("Address must be IPv4 or IPv6", nameof(address));
+
+            Uri uri = BuildUri("/dns/mod-record.json", nvc);
+            HttpResponseMessage resp = await _client.GetAsync(uri);
+
+            string content = await resp.Content.ReadAsStringAsync();
+            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+
+            if (status.Status == "Failed")
+                throw new Exception(status.StatusDescription);
+
+            return status.Status == "Success";
+        }
+
+        public async Task<bool> RecordsAlterTxt(string domainName, int recordId, string host, int ttl, string text)
+        {
+            NameValueCollection nvc = CreateUri();
+
+            nvc["domain-name"] = domainName;
+            nvc["record-id"] = recordId.ToString();
+            nvc["host"] = host;
+            nvc["ttl"] = ttl.ToString();
+            nvc["record"] = text;
+            nvc["record-type"] = RecordType.TXT.ToString();
+
+            Uri uri = BuildUri("/dns/mod-record.json", nvc);
+            HttpResponseMessage resp = await _client.GetAsync(uri);
+
+            string content = await resp.Content.ReadAsStringAsync();
+            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+
+            if (status.Status == "Failed")
+                throw new Exception(status.StatusDescription);
+
+            return status.Status == "Success";
+        }
+
+        public async Task<int?> RecordsAddA(string domainName, string host, int ttl, IPAddress address)
         {
             NameValueCollection nvc = CreateUri();
 
@@ -80,10 +132,10 @@ namespace CloudNsLib.Client
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
 
-            return status.Status == "Success";
+            return status.Status == "Success" ? (int?)status.Data["id"] : null;
         }
 
-        public async Task<bool> RecordsAddMx(string domainName, string host, int ttl, string target, int priority)
+        public async Task<int?> RecordsAddMx(string domainName, string host, int ttl, string target, int priority)
         {
             NameValueCollection nvc = CreateUri();
 
@@ -103,10 +155,10 @@ namespace CloudNsLib.Client
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
 
-            return status.Status == "Success";
+            return status.Status == "Success" ? (int?)status.Data["id"] : null;
         }
 
-        public async Task<bool> RecordsAddCname(string domainName, string host, int ttl, string target)
+        public async Task<int?> RecordsAddCname(string domainName, string host, int ttl, string target)
         {
             NameValueCollection nvc = CreateUri();
 
@@ -125,10 +177,10 @@ namespace CloudNsLib.Client
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
 
-            return status.Status == "Success";
+            return status.Status == "Success" ? (int?)status.Data["id"] : null;
         }
 
-        public async Task<bool> RecordsAddTxt(string domainName, string host, int ttl, string text)
+        public async Task<int?> RecordsAddTxt(string domainName, string host, int ttl, string text)
         {
             NameValueCollection nvc = CreateUri();
 
@@ -147,10 +199,10 @@ namespace CloudNsLib.Client
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
 
-            return status.Status == "Success";
+            return status.Status == "Success" ? (int?)Convert.ToInt32(status.Data["id"]) : null;
         }
 
-        public async Task<bool> RecordsAddNs(string domainName, string host, int ttl, string nameserver)
+        public async Task<int?> RecordsAddNs(string domainName, string host, int ttl, string nameserver)
         {
             NameValueCollection nvc = CreateUri();
 
@@ -169,10 +221,10 @@ namespace CloudNsLib.Client
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
 
-            return status.Status == "Success";
+            return status.Status == "Success" ? (int?)status.Data["id"] : null;
         }
 
-        public async Task<bool> RecordsAddSrv(string domainName, string host, int ttl, string value, int priority, int weight, int port)
+        public async Task<int?> RecordsAddSrv(string domainName, string host, int ttl, string value, int priority, int weight, int port)
         {
             NameValueCollection nvc = CreateUri();
 
@@ -194,10 +246,10 @@ namespace CloudNsLib.Client
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
 
-            return status.Status == "Success";
+            return status.Status == "Success" ? (int?)status.Data["id"] : null;
         }
 
-        public async Task<bool> RecordsAddSshFp(string domainName, string host, int ttl, string value, int algorithm, int fptype)
+        public async Task<int?> RecordsAddSshFp(string domainName, string host, int ttl, string value, int algorithm, int fptype)
         {
             NameValueCollection nvc = CreateUri();
 
@@ -218,7 +270,7 @@ namespace CloudNsLib.Client
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
 
-            return status.Status == "Success";
+            return status.Status == "Success" ? (int?)status.Data["id"] : null;
         }
     }
 }
