@@ -63,7 +63,7 @@ namespace CloudNsLib.Client
                 if (i > 0)
                     sb.Append("&");
 
-                sb.Append(nvc.Keys[i] + "=" + WebUtility.UrlEncode(nvc[i]));
+                sb.Append(nvc.Keys[i] + "=" + Uri.EscapeUriString(nvc[i]));
             }
 
             UriBuilder builder = new UriBuilder(EndPoint);
