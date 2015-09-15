@@ -107,6 +107,29 @@ namespace CloudNsLib.Client
             return status.Status == "Success";
         }
 
+        public async Task<bool> RecordsAlterCname(string domainName, int recordId, string host, int ttl, string target)
+        {
+            NameValueCollection nvc = CreateUri();
+
+            nvc["domain-name"] = domainName;
+            nvc["record-id"] = recordId.ToString();
+            nvc["host"] = host;
+            nvc["ttl"] = ttl.ToString();
+            nvc["record"] = target;
+            nvc["record-type"] = RecordType.CNAME.ToString();
+
+            Uri uri = BuildUri("/dns/mod-record.json", nvc);
+            HttpResponseMessage resp = await _client.GetAsync(uri);
+
+            string content = await resp.Content.ReadAsStringAsync();
+            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+
+            if (status.Status == "Failed")
+                throw new Exception(status.StatusDescription);
+
+            return status.Status == "Success";
+        }
+
         public async Task<int?> RecordsAddA(string domainName, string host, int ttl, IPAddress address)
         {
             NameValueCollection nvc = CreateUri();
