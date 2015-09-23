@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+    <metadata>
+        <id>CloudNsLib</id>
+        <version>0.2.0-alpha</version>
+        <authors>LordMike</authors>
+        <owners>LordMike</owners>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>ClouDNS.net API client for .NET. Work in progress.</description>
+        <dependencies>
+            <dependency id="System.Net.Http" version="4.0.0" />
+            <dependency id="Newtonsoft.Json" version="7.0.0" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="..\CloudNsLib\bin\Release\CloudNsLib.dll" target="lib\net45\CloudNsLib.dll" />
+        <file src="..\CloudNsLib\bin\Release\CloudNsLib.pdb" target="lib\net45\CloudNsLib.pdb" />
+    </files>
+</package>
