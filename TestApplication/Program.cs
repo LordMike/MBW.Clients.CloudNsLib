@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Net;
-using CloudNsLib.Client;
+﻿using CloudNsLib.Client;
 
 namespace TestApplication
 {
