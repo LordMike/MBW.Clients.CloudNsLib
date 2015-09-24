@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A730B9A1-8F37-4542-97B9-FD0F5D2DB167}</ProjectGuid>
+    <ProjectGuid>{5C701279-CF14-4476-B592-C82F1D9A14CB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CloudNsLib</RootNamespace>
