@@ -4,13 +4,13 @@ namespace CloudNsLib.Objects
     {
         public string Host { get; set; }
 
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         public string Record { get; set; }
 
         public int Ttl { get; set; }
 
-        public string Type { get; set; }
+        public RecordType Type { get; set; }
 
         public override string ToString()
         {
