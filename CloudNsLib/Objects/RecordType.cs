@@ -5,6 +5,6 @@ namespace CloudNsLib.Objects
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum RecordType
     {
-        A, AAAA, MX, CNAME, TXT, NS, SRV, WR, RP, SSHFP
+        A, AAAA, MX, CNAME, TXT, NS, SRV, SSHFP, SPF
     }
 }

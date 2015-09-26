@@ -68,6 +68,31 @@ namespace CloudNsLibTests
         }
 
         [TestMethod]
+        public void TestSpfRecord()
+        {
+            string txtA = "v=spf1 -all";
+            string txtB = "v=spf1 include:google.dk -all";
+
+            // Create
+            long? id = _client.RecordsAddSpf(Configuration.GetTestZoneName(), TestRecordName, 300, txtA).Result;
+
+            Assert.IsNotNull(id);
+            Assert.IsTrue(TestExistence(TestRecordName, RecordType.SPF, txtA));
+
+            // Alter
+            bool altered = _client.RecordsAlterSpf(Configuration.GetTestZoneName(), id.Value, TestRecordName, 300, txtB).Result;
+
+            Assert.IsTrue(altered);
+            Assert.IsTrue(TestExistence(TestRecordName, RecordType.SPF, txtB));
+
+            // Delete
+            bool deleted = _client.RecordsDelete(Configuration.GetTestZoneName(), id.Value).Result;
+
+            Assert.IsTrue(deleted);
+            Assert.IsFalse(TestExistence(TestRecordName, RecordType.SPF));
+        }
+
+        [TestMethod]
         public void TestNsRecord()
         {
             string nameA = "ns1.testdomain.dk";

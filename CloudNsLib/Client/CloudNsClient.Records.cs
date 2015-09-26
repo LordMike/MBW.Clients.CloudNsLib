@@ -107,6 +107,29 @@ namespace CloudNsLib.Client
             return status.Status == "Success";
         }
 
+        public async Task<bool> RecordsAlterSpf(string domainName, long recordId, string host, int ttl, string spfRecord)
+        {
+            NameValueCollection nvc = CreateUri();
+
+            nvc["domain-name"] = domainName;
+            nvc["record-id"] = recordId.ToString();
+            nvc["host"] = host;
+            nvc["ttl"] = ttl.ToString();
+            nvc["record"] = spfRecord;
+            nvc["record-type"] = RecordType.TXT.ToString();
+
+            Uri uri = BuildUri("/dns/mod-record.json", nvc);
+            HttpResponseMessage resp = await _client.GetAsync(uri);
+
+            string content = await resp.Content.ReadAsStringAsync();
+            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+
+            if (status.Status == "Failed")
+                throw new Exception(status.StatusDescription);
+
+            return status.Status == "Success";
+        }
+
         public async Task<bool> RecordsAlterCname(string domainName, long recordId, string host, int ttl, string target)
         {
             NameValueCollection nvc = CreateUri();
@@ -310,6 +333,28 @@ namespace CloudNsLib.Client
             nvc["ttl"] = ttl.ToString();
             nvc["record"] = text;
             nvc["record-type"] = RecordType.TXT.ToString();
+
+            Uri uri = BuildUri("/dns/add-record.json", nvc);
+            HttpResponseMessage resp = await _client.GetAsync(uri);
+
+            string content = await resp.Content.ReadAsStringAsync();
+            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+
+            if (status.Status == "Failed")
+                throw new Exception(status.StatusDescription);
+
+            return status.Status == "Success" ? status.Data["id"] as long? : null;
+        }
+
+        public async Task<long?> RecordsAddSpf(string domainName, string host, int ttl, string spfRecord)
+        {
+            NameValueCollection nvc = CreateUri();
+
+            nvc["domain-name"] = domainName;
+            nvc["host"] = host;
+            nvc["ttl"] = ttl.ToString();
+            nvc["record"] = spfRecord;
+            nvc["record-type"] = RecordType.SPF.ToString();
 
             Uri uri = BuildUri("/dns/add-record.json", nvc);
             HttpResponseMessage resp = await _client.GetAsync(uri);
