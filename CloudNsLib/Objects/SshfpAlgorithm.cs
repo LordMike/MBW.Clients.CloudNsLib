@@ -3,8 +3,10 @@
 namespace CloudNsLib.Objects
 {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public enum RecordType
+    public enum SshfpAlgorithm
     {
-        A, AAAA, MX, CNAME, TXT, NS, SRV, WR, RP, SSHFP
+        RSA = 1,
+        DSA = 2,
+        ECDSA = 3
     }
 }

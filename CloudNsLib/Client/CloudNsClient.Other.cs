@@ -154,7 +154,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> DeleteZone(string zoneName)
         {
-            NameValueCollection nvc = this.CreateUri();
+            NameValueCollection nvc = CreateUri();
 
             nvc["domain-name"] = zoneName;
 

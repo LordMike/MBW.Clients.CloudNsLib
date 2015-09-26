@@ -154,6 +154,80 @@ namespace CloudNsLib.Client
             return status.Status == "Success";
         }
 
+        public async Task<bool> RecordsAlterNs(string domainName, long recordId, string host, int ttl, string nameserver)
+        {
+            NameValueCollection nvc = CreateUri();
+
+            nvc["domain-name"] = domainName;
+            nvc["record-id"] = recordId.ToString();
+            nvc["host"] = host;
+            nvc["ttl"] = ttl.ToString();
+            nvc["record"] = nameserver;
+            nvc["record-type"] = RecordType.NS.ToString();
+
+            Uri uri = BuildUri("/dns/mod-record.json", nvc);
+            HttpResponseMessage resp = await _client.GetAsync(uri);
+
+            string content = await resp.Content.ReadAsStringAsync();
+            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+
+            if (status.Status == "Failed")
+                throw new Exception(status.StatusDescription);
+
+            return status.Status == "Success";
+        }
+
+        public async Task<bool> RecordsAlterSrv(string domainName, long recordId, string host, int ttl, string value, int priority, int weight, int port)
+        {
+            NameValueCollection nvc = CreateUri();
+
+            nvc["domain-name"] = domainName;
+            nvc["record-id"] = recordId.ToString();
+            nvc["host"] = host;
+            nvc["ttl"] = ttl.ToString();
+            nvc["record"] = value;
+            nvc["priority"] = priority.ToString();
+            nvc["weight"] = weight.ToString();
+            nvc["port"] = port.ToString();
+            nvc["record-type"] = RecordType.SRV.ToString();
+
+            Uri uri = BuildUri("/dns/mod-record.json", nvc);
+            HttpResponseMessage resp = await _client.GetAsync(uri);
+
+            string content = await resp.Content.ReadAsStringAsync();
+            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+
+            if (status.Status == "Failed")
+                throw new Exception(status.StatusDescription);
+
+            return status.Status == "Success";
+        }
+
+        public async Task<bool> RecordsAlterSshfp(string domainName, long recordId, string host, int ttl, string value, SshfpAlgorithm algorithm, SshfpFingerprintType fptype)
+        {
+            NameValueCollection nvc = CreateUri();
+
+            nvc["domain-name"] = domainName;
+            nvc["record-id"] = recordId.ToString();
+            nvc["host"] = host;
+            nvc["ttl"] = ttl.ToString();
+            nvc["record"] = value;
+            nvc["algorithm"] = ((int)algorithm).ToString();
+            nvc["fptype"] = ((int)fptype).ToString();
+            nvc["record-type"] = RecordType.SSHFP.ToString();
+
+            Uri uri = BuildUri("/dns/mod-record.json", nvc);
+            HttpResponseMessage resp = await _client.GetAsync(uri);
+
+            string content = await resp.Content.ReadAsStringAsync();
+            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+
+            if (status.Status == "Failed")
+                throw new Exception(status.StatusDescription);
+
+            return status.Status == "Success";
+        }
+
         public async Task<long?> RecordsAddA(string domainName, string host, int ttl, IPAddress address)
         {
             NameValueCollection nvc = CreateUri();
@@ -282,7 +356,7 @@ namespace CloudNsLib.Client
             nvc["priority"] = priority.ToString();
             nvc["weight"] = weight.ToString();
             nvc["port"] = port.ToString();
-            nvc["record-type"] = RecordType.NS.ToString();
+            nvc["record-type"] = RecordType.SRV.ToString();
 
             Uri uri = BuildUri("/dns/add-record.json", nvc);
             HttpResponseMessage resp = await _client.GetAsync(uri);
@@ -296,7 +370,7 @@ namespace CloudNsLib.Client
             return status.Status == "Success" ? status.Data["id"] as long? : null;
         }
 
-        public async Task<long?> RecordsAddSshFp(string domainName, string host, int ttl, string value, int algorithm, int fptype)
+        public async Task<long?> RecordsAddSshfp(string domainName, string host, int ttl, string value, SshfpAlgorithm algorithm, SshfpFingerprintType fptype)
         {
             NameValueCollection nvc = CreateUri();
 
@@ -304,9 +378,9 @@ namespace CloudNsLib.Client
             nvc["host"] = host;
             nvc["ttl"] = ttl.ToString();
             nvc["record"] = value;
-            nvc["algorithm"] = algorithm.ToString();
-            nvc["fptype"] = fptype.ToString();
-            nvc["record-type"] = RecordType.NS.ToString();
+            nvc["algorithm"] = ((int)algorithm).ToString();
+            nvc["fptype"] = ((int)fptype).ToString();
+            nvc["record-type"] = RecordType.SSHFP.ToString();
 
             Uri uri = BuildUri("/dns/add-record.json", nvc);
             HttpResponseMessage resp = await _client.GetAsync(uri);

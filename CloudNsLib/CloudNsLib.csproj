@@ -53,6 +53,8 @@
     <Compile Include="Objects\AvailableNameserver.cs" />
     <Compile Include="Client\CloudNsClient.cs" />
     <Compile Include="Objects\DnsRecord.cs" />
+    <Compile Include="Objects\SshfpAlgorithm.cs" />
+    <Compile Include="Objects\SshfpFingerprintType.cs" />
     <Compile Include="Objects\StatusMessage.cs" />
     <Compile Include="Objects\ListZone.cs" />
     <Compile Include="Objects\NameserverType.cs" />

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using CloudNsLib.Client;
 using CloudNsLib.Objects;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -11,10 +12,11 @@ namespace CloudNsLibTests
     [TestClass]
     public class RecordsTest
     {
+        private const string TestRecordName = "test";
         private static CloudNsClient _client;
 
         [ClassInitialize]
-        public static void TestInit(TestContext context)
+        public static void ClassInit(TestContext context)
         {
             _client = Configuration.GetClient();
 
@@ -24,11 +26,20 @@ namespace CloudNsLibTests
         }
 
         [ClassCleanup]
-        public static void TestClean()
+        public static void ClassClean()
         {
             bool deleted = _client.DeleteZone(Configuration.GetTestZoneName()).Result;
             if (!deleted)
                 throw new Exception("Unable to delete " + Configuration.GetTestZoneName());
+        }
+
+        [TestCleanup]
+        public void TestClean()
+        {
+            List<DnsRecord> recs = _client.RecordsList(Configuration.GetTestZoneName()).Result;
+
+            foreach (DnsRecord rec in recs)
+                _client.RecordsDelete(Configuration.GetTestZoneName(), rec.Id).Wait();
         }
 
         [TestMethod]
@@ -38,44 +49,108 @@ namespace CloudNsLibTests
             string txtB = "dr.dk";
 
             // Create
-            long? id = _client.RecordsAddTxt(Configuration.GetTestZoneName(), "test", 300, txtA).Result;
+            long? id = _client.RecordsAddTxt(Configuration.GetTestZoneName(), TestRecordName, 300, txtA).Result;
 
             Assert.IsNotNull(id);
-            Assert.IsTrue(TestExistence("test", RecordType.TXT, txtA));
+            Assert.IsTrue(TestExistence(TestRecordName, RecordType.TXT, txtA));
 
             // Alter
-            bool altered = _client.RecordsAlterTxt(Configuration.GetTestZoneName(), id.Value, "test", 300, txtB).Result;
+            bool altered = _client.RecordsAlterTxt(Configuration.GetTestZoneName(), id.Value, TestRecordName, 300, txtB).Result;
 
             Assert.IsTrue(altered);
-            Assert.IsTrue(TestExistence("test", RecordType.TXT, txtB));
+            Assert.IsTrue(TestExistence(TestRecordName, RecordType.TXT, txtB));
 
             // Delete
             bool deleted = _client.RecordsDelete(Configuration.GetTestZoneName(), id.Value).Result;
 
             Assert.IsTrue(deleted);
-            Assert.IsFalse(TestExistence("test", RecordType.TXT));
+            Assert.IsFalse(TestExistence(TestRecordName, RecordType.TXT));
         }
 
-        //private void TestType(Func<long?> create)
-        //{
-        //    // Create
-        //    long? id = create();
+        [TestMethod]
+        public void TestNsRecord()
+        {
+            string nameA = "ns1.testdomain.dk";
+            string nameB = "ns2.testdomain.dk";
 
-        //    //Assert.IsNotNull(id);
-        //    //Assert.IsTrue(TestExistence("test", RecordType.MX, nameA));
+            // Create
+            long? id = _client.RecordsAddNs(Configuration.GetTestZoneName(), TestRecordName, 300, nameA).Result;
 
-        //    //// Alter
-        //    //bool altered = _client.RecordsAlterMx(Configuration.GetTestZoneName(), id.Value, "test", 300, nameB, prioB).Result;
+            Assert.IsNotNull(id);
+            Assert.IsTrue(TestExistence(TestRecordName, RecordType.NS, nameA));
 
-        //    //Assert.IsTrue(altered);
-        //    //Assert.IsTrue(TestExistence("test", RecordType.MX, nameB));
+            // Alter
+            bool altered = _client.RecordsAlterNs(Configuration.GetTestZoneName(), id.Value, TestRecordName, 300, nameB).Result;
 
-        //    //// Delete
-        //    //bool deleted = _client.RecordsDelete(Configuration.GetTestZoneName(), id.Value).Result;
+            Assert.IsTrue(altered);
+            Assert.IsTrue(TestExistence(TestRecordName, RecordType.NS, nameB));
 
-        //    //Assert.IsTrue(deleted);
-        //    //Assert.IsFalse(TestExistence("test", RecordType.MX));
-        //}
+            // Delete
+            bool deleted = _client.RecordsDelete(Configuration.GetTestZoneName(), id.Value).Result;
+
+            Assert.IsTrue(deleted);
+            Assert.IsFalse(TestExistence(TestRecordName, RecordType.NS));
+        }
+
+        [TestMethod]
+        public void TestSshFpRecord()
+        {
+            SshfpFingerprintType fptypeA = SshfpFingerprintType.SHA1;
+            SshfpAlgorithm algorithmA = SshfpAlgorithm.RSA;
+            string valueA = "7E7A55CEA3B8E15528665A6781CA7C35190CF0EB";
+
+            SshfpFingerprintType fptypeB = SshfpFingerprintType.SHA1;
+            SshfpAlgorithm algorithmB= SshfpAlgorithm.DSA;
+            string valueB = "CC17F14DA60CF38E809FE58B10D0F22680D59D08";
+
+            // Create
+            long? id = _client.RecordsAddSshfp(Configuration.GetTestZoneName(), TestRecordName, 300, valueA, algorithmA, fptypeA).Result;
+
+            Assert.IsNotNull(id);
+            Assert.IsTrue(TestExistence(TestRecordName, RecordType.SSHFP, valueA));
+
+            // Alter
+            bool altered = _client.RecordsAlterSshfp(Configuration.GetTestZoneName(), id.Value, TestRecordName, 300, valueB, algorithmB, fptypeB).Result;
+
+            Assert.IsTrue(altered);
+            Assert.IsTrue(TestExistence(TestRecordName, RecordType.SSHFP, valueB));
+
+            // Delete
+            bool deleted = _client.RecordsDelete(Configuration.GetTestZoneName(), id.Value).Result;
+
+            Assert.IsTrue(deleted);
+            Assert.IsFalse(TestExistence(TestRecordName, RecordType.SSHFP));
+        }
+
+        [TestMethod]
+        public void TestSrvRecord()
+        {
+            string host = "_jabber._tcp";
+
+            string nameA = "jabber.google.com";
+            string nameB = "jabber.google.dk";
+
+            int prioA = 10, weightA = 10, portA = 10;
+            int prioB = 20, weightB = 20, portB = 20;
+
+            // Create
+            long? id = _client.RecordsAddSrv(Configuration.GetTestZoneName(), host, 300, nameA, prioA, weightA, portA).Result;
+
+            Assert.IsNotNull(id);
+            Assert.IsTrue(TestExistence(host, RecordType.SRV, nameA));
+
+            // Alter
+            bool altered = _client.RecordsAlterSrv(Configuration.GetTestZoneName(), id.Value, host, 300, nameB, prioB, weightB, portB).Result;
+
+            Assert.IsTrue(altered);
+            Assert.IsTrue(TestExistence(host, RecordType.SRV, nameB));
+
+            // Delete
+            bool deleted = _client.RecordsDelete(Configuration.GetTestZoneName(), id.Value).Result;
+
+            Assert.IsTrue(deleted);
+            Assert.IsFalse(TestExistence(host, RecordType.SRV));
+        }
 
         [TestMethod]
         public void TestMxRecord()
@@ -87,22 +162,22 @@ namespace CloudNsLibTests
             int prioB = 20;
 
             // Create
-            long? id = _client.RecordsAddMx(Configuration.GetTestZoneName(), "test", 300, nameA, prioA).Result;
+            long? id = _client.RecordsAddMx(Configuration.GetTestZoneName(), TestRecordName, 300, nameA, prioA).Result;
 
             Assert.IsNotNull(id);
-            Assert.IsTrue(TestExistence("test", RecordType.MX, nameA));
+            Assert.IsTrue(TestExistence(TestRecordName, RecordType.MX, nameA));
 
             // Alter
-            bool altered = _client.RecordsAlterMx(Configuration.GetTestZoneName(), id.Value, "test", 300, nameB, prioB).Result;
+            bool altered = _client.RecordsAlterMx(Configuration.GetTestZoneName(), id.Value, TestRecordName, 300, nameB, prioB).Result;
 
             Assert.IsTrue(altered);
-            Assert.IsTrue(TestExistence("test", RecordType.MX, nameB));
+            Assert.IsTrue(TestExistence(TestRecordName, RecordType.MX, nameB));
 
             // Delete
             bool deleted = _client.RecordsDelete(Configuration.GetTestZoneName(), id.Value).Result;
 
             Assert.IsTrue(deleted);
-            Assert.IsFalse(TestExistence("test", RecordType.MX));
+            Assert.IsFalse(TestExistence(TestRecordName, RecordType.MX));
         }
 
         [TestMethod]
@@ -112,22 +187,22 @@ namespace CloudNsLibTests
             string cnameB = "dr.dk";
 
             // Create
-            long? id = _client.RecordsAddCname(Configuration.GetTestZoneName(), "test", 300, cnameA).Result;
+            long? id = _client.RecordsAddCname(Configuration.GetTestZoneName(), TestRecordName, 300, cnameA).Result;
 
             Assert.IsNotNull(id);
-            Assert.IsTrue(TestExistence("test", RecordType.CNAME, cnameA));
+            Assert.IsTrue(TestExistence(TestRecordName, RecordType.CNAME, cnameA));
 
             // Alter
-            bool altered = _client.RecordsAlterCname(Configuration.GetTestZoneName(), id.Value, "test", 300, cnameB).Result;
+            bool altered = _client.RecordsAlterCname(Configuration.GetTestZoneName(), id.Value, TestRecordName, 300, cnameB).Result;
 
             Assert.IsTrue(altered);
-            Assert.IsTrue(TestExistence("test", RecordType.CNAME, cnameB));
+            Assert.IsTrue(TestExistence(TestRecordName, RecordType.CNAME, cnameB));
 
             // Delete
             bool deleted = _client.RecordsDelete(Configuration.GetTestZoneName(), id.Value).Result;
 
             Assert.IsTrue(deleted);
-            Assert.IsFalse(TestExistence("test", RecordType.CNAME));
+            Assert.IsFalse(TestExistence(TestRecordName, RecordType.CNAME));
         }
 
         [TestMethod]
@@ -137,22 +212,22 @@ namespace CloudNsLibTests
             IPAddress ipB = IPAddress.Parse("10.20.30.40");
 
             // Create
-            long? id = _client.RecordsAddA(Configuration.GetTestZoneName(), "test", 300, ipA).Result;
+            long? id = _client.RecordsAddA(Configuration.GetTestZoneName(), TestRecordName, 300, ipA).Result;
 
             Assert.IsNotNull(id);
-            Assert.IsTrue(TestExistence("test", RecordType.A, ipA.ToString()));
+            Assert.IsTrue(TestExistence(TestRecordName, RecordType.A, ipA.ToString()));
 
             // Alter
-            bool altered = _client.RecordsAlterA(Configuration.GetTestZoneName(), id.Value, "test", 300, ipB).Result;
+            bool altered = _client.RecordsAlterA(Configuration.GetTestZoneName(), id.Value, TestRecordName, 300, ipB).Result;
 
             Assert.IsTrue(altered);
-            Assert.IsTrue(TestExistence("test", RecordType.A, ipB.ToString()));
+            Assert.IsTrue(TestExistence(TestRecordName, RecordType.A, ipB.ToString()));
 
             // Delete
             bool deleted = _client.RecordsDelete(Configuration.GetTestZoneName(), id.Value).Result;
 
             Assert.IsTrue(deleted);
-            Assert.IsFalse(TestExistence("test", RecordType.A));
+            Assert.IsFalse(TestExistence(TestRecordName, RecordType.A));
         }
 
         [TestMethod]
@@ -162,22 +237,22 @@ namespace CloudNsLibTests
             IPAddress ipB = IPAddress.Parse("fe80::2");
 
             // Create
-            long? id = _client.RecordsAddA(Configuration.GetTestZoneName(), "test", 300, ipA).Result;
+            long? id = _client.RecordsAddA(Configuration.GetTestZoneName(), TestRecordName, 300, ipA).Result;
 
             Assert.IsNotNull(id);
-            Assert.IsTrue(TestExistence("test", RecordType.AAAA, ipA.ToString()));
+            Assert.IsTrue(TestExistence(TestRecordName, RecordType.AAAA, ipA.ToString()));
 
             // Alter
-            bool altered = _client.RecordsAlterA(Configuration.GetTestZoneName(), id.Value, "test", 300, ipB).Result;
+            bool altered = _client.RecordsAlterA(Configuration.GetTestZoneName(), id.Value, TestRecordName, 300, ipB).Result;
 
             Assert.IsTrue(altered);
-            Assert.IsTrue(TestExistence("test", RecordType.AAAA, ipB.ToString()));
+            Assert.IsTrue(TestExistence(TestRecordName, RecordType.AAAA, ipB.ToString()));
 
             // Delete
             bool deleted = _client.RecordsDelete(Configuration.GetTestZoneName(), id.Value).Result;
 
             Assert.IsTrue(deleted);
-            Assert.IsFalse(TestExistence("test", RecordType.AAAA));
+            Assert.IsFalse(TestExistence(TestRecordName, RecordType.AAAA));
         }
 
         private List<DnsRecord> GetRecords(string host, RecordType type)

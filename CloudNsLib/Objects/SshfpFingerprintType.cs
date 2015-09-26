@@ -3,8 +3,9 @@
 namespace CloudNsLib.Objects
 {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public enum RecordType
+    public enum SshfpFingerprintType
     {
-        A, AAAA, MX, CNAME, TXT, NS, SRV, WR, RP, SSHFP
+        SHA1 = 1,
+        SHA256 = 2
     }
 }
