@@ -39,7 +39,7 @@ namespace CloudNsLib.Client
             IdType = authType;
         }
 
-        private NameValueCollection CreateUri()
+        internal NameValueCollection CreateUri()
         {
             NameValueCollection nvc = new NameValueCollection();
 

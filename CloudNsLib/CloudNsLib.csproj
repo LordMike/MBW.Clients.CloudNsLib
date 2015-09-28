@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Client\CloudNsClient.Records.cs" />
     <Compile Include="Client\CloudNsClient.Other.cs" />
+    <Compile Include="Client\ZoneIterator.cs" />
     <Compile Include="Objects\AuthIdType.cs" />
     <Compile Include="Objects\AvailableNameserver.cs" />
     <Compile Include="Client\CloudNsClient.cs" />

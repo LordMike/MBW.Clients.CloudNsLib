@@ -30,7 +30,7 @@ namespace CloudNsLib.Client
             }
         }
 
-        public async Task<List<ListZone>> GetZones(string search = null, int page = 1, int rowsPrPage = 10)
+        internal async Task<List<ListZone>> GetZoneList(string search, int page, int rowsPrPage)
         {
             NameValueCollection nvc = CreateUri();
 
@@ -53,7 +53,12 @@ namespace CloudNsLib.Client
                 throw new Exception(JsonConvert.DeserializeObject<StatusMessage>(content).StatusDescription);
             }
         }
-        
+
+        public ZoneIterator ListZones(string search = null)
+        {
+            return new ZoneIterator(this, search);
+        }
+
         public async Task<bool> IsZoneUpdated(string domainName)
         {
             NameValueCollection nvc = CreateUri();
@@ -150,6 +155,11 @@ namespace CloudNsLib.Client
             {
                 throw new Exception(JsonConvert.DeserializeObject<StatusMessage>(content).StatusDescription);
             }
+        }
+
+        public async Task<bool> DeleteZone(ListZone zone)
+        {
+            return await DeleteZone(zone.Name);
         }
 
         public async Task<bool> DeleteZone(string zoneName)

@@ -58,6 +58,7 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="RecordsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ZonesTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CloudNsLib\CloudNsLib.csproj">
