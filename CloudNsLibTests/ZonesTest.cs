@@ -35,6 +35,26 @@ namespace CloudNsLibTests
         }
 
         [TestMethod]
+        public void TestMasterZoneCreateMultipleNs()
+        {
+            List<string> nameservers = new List<string> { "google.dk", "test.dk" };
+            const string name = "multiplens" + TestZoneNameSuffix;
+
+            // Create
+            Assert.IsTrue(_client.CreateMasterZone(name, nameservers).Result);
+
+            // Ensure we have all the NS
+            List<DnsRecord> recs = _client.RecordsList(name).Result;
+            List<DnsRecord> ns = recs.Where(s => s.Type == RecordType.NS).ToList();
+
+            Assert.AreEqual(nameservers.Count, ns.Count);
+            Assert.IsTrue(nameservers.All(s => recs.Any(x => x.Record == s.ToString())));
+
+            // Delete zone
+            Assert.IsTrue(_client.DeleteZone(name).Result);
+        }
+
+        [TestMethod]
         public void TestMasterZoneCreate()
         {
             string[] names = Enumerable.Range(1, 20).Select(s => "test-master" + s + TestZoneNameSuffix).ToArray();

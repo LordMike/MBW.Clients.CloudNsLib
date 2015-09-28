@@ -59,10 +59,21 @@ namespace CloudNsLib.Client
 
             for (int i = 0; i < nvc.Count; i++)
             {
-                if (i > 0)
-                    sb.Append("&");
+                string key = nvc.GetKey(i);
+                string[] vals = nvc.GetValues(i);
 
-                sb.Append(nvc.Keys[i] + "=" + Uri.EscapeUriString(nvc[i]));
+                if (vals == null)
+                    continue;
+
+                foreach (string val in vals)
+                {
+                    if (i > 0)
+                        sb.Append("&");
+
+                    sb.Append(key);
+                    sb.Append("=");
+                    sb.Append(Uri.EscapeUriString(val));
+                }
             }
 
             UriBuilder builder = new UriBuilder(EndPoint);

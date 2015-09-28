@@ -99,7 +99,7 @@ namespace CloudNsLib.Client
             }
         }
 
-        public async Task<bool> CreateMasterZone(string zoneName, List<IPAddress> masterServers = null)
+        public async Task<bool> CreateMasterZone(string zoneName, List<string> masterServers = null)
         {
             NameValueCollection nvc = CreateUri();
 
@@ -110,8 +110,8 @@ namespace CloudNsLib.Client
             {
                 if (masterServers.Any())
                 {
-                    foreach (IPAddress ipAddress in masterServers)
-                        nvc["ns[]"] = ipAddress.ToString();
+                    foreach (string ipAddress in masterServers)
+                        nvc.Add("ns[]", ipAddress);
                 }
                 else
                     nvc["ns[]"] = string.Empty;

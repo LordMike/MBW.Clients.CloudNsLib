@@ -21,7 +21,7 @@ namespace CloudNsLibTests
         {
             _client = Configuration.GetClient();
 
-            bool created = _client.CreateMasterZone(TestZoneName, new List<IPAddress>()).Result;
+            bool created = _client.CreateMasterZone(TestZoneName).Result;
             if (!created)
                 throw new Exception("Unable to create " + TestZoneName);
         }
