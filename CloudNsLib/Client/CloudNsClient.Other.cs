@@ -14,44 +14,20 @@ namespace CloudNsLib.Client
     {
         public async Task<List<AvailableNameserver>> ListAvailableNameservers()
         {
-            NameValueCollection nvc = CreateUri();
-
-            Uri uri = BuildUri("/dns/available-name-servers.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            try
-            {
-                return JsonConvert.DeserializeObject<List<AvailableNameserver>>(content);
-            }
-            catch (Exception)
-            {
-                throw new Exception(JsonConvert.DeserializeObject<StatusMessage>(content).StatusDescription);
-            }
+            return await ExecuteGet<List<AvailableNameserver>>("/dns/available-name-servers.json", new NameValueCollection());
         }
 
         internal async Task<List<ListZone>> GetZoneList(string search, int page, int rowsPrPage)
         {
-            NameValueCollection nvc = CreateUri();
-
+            NameValueCollection nvc = new NameValueCollection();
+            
             nvc["page"] = page.ToString();
             nvc["rows-per-page"] = rowsPrPage.ToString();
 
             if (!string.IsNullOrWhiteSpace(search))
                 nvc["search"] = search;
 
-            Uri uri = BuildUri("/dns/list-zones.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            try
-            {
-                return JsonConvert.DeserializeObject<List<ListZone>>(content);
-            }
-            catch (Exception)
-            {
-                throw new Exception(JsonConvert.DeserializeObject<StatusMessage>(content).StatusDescription);
-            }
+            return await ExecuteGet<List<ListZone>>("/dns/list-zones.json", nvc);
         }
 
         public ZoneIterator ListZones(string search = null)
@@ -61,47 +37,25 @@ namespace CloudNsLib.Client
 
         public async Task<bool> IsZoneUpdated(string domainName)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = domainName;
 
-            Uri uri = BuildUri("/dns/is-updated.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            try
-            {
-                return JsonConvert.DeserializeObject<bool>(content);
-            }
-            catch (Exception)
-            {
-                throw new Exception(JsonConvert.DeserializeObject<StatusMessage>(content).StatusDescription);
-            }
+            return await ExecuteGet<bool>("/dns/is-updated.json", nvc);
         }
 
         public async Task<List<ZoneUpdateStatus>> GetUpdateStatus(string domainName)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = domainName;
 
-            Uri uri = BuildUri("/dns/update-status.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            try
-            {
-                return JsonConvert.DeserializeObject<List<ZoneUpdateStatus>>(content);
-            }
-            catch (Exception)
-            {
-                throw new Exception(JsonConvert.DeserializeObject<StatusMessage>(content).StatusDescription);
-            }
+            return await ExecuteGet<List<ZoneUpdateStatus>>("/dns/update-status.json", nvc);
         }
 
         public async Task<bool> CreateMasterZone(string zoneName, List<string> masterServers = null)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = zoneName;
             nvc["zone-type"] = "master";
@@ -117,44 +71,22 @@ namespace CloudNsLib.Client
                     nvc["ns[]"] = string.Empty;
             }
 
-            Uri uri = BuildUri("/dns/register.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/register.json", nvc);
 
-            string content = await resp.Content.ReadAsStringAsync();
-            try
-            {
-                StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
-
-                return status.Status == "Success";
-            }
-            catch (Exception)
-            {
-                throw new Exception(JsonConvert.DeserializeObject<StatusMessage>(content).StatusDescription);
-            }
+            return status.Status == "Success";
         }
 
         public async Task<bool> CreateSlaveZone(string zoneName, IPAddress masterServer)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = zoneName;
             nvc["zone-type"] = "slave";
             nvc["master-ip"] = masterServer.ToString();
 
-            Uri uri = BuildUri("/dns/register.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/register.json", nvc);
 
-            string content = await resp.Content.ReadAsStringAsync();
-            try
-            {
-                StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
-
-                return status.Status == "Success";
-            }
-            catch (Exception)
-            {
-                throw new Exception(JsonConvert.DeserializeObject<StatusMessage>(content).StatusDescription);
-            }
+            return status.Status == "Success";
         }
 
         public async Task<bool> DeleteZone(ListZone zone)
@@ -164,24 +96,13 @@ namespace CloudNsLib.Client
 
         public async Task<bool> DeleteZone(string zoneName)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = zoneName;
 
-            Uri uri = BuildUri("/dns/delete.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/delete.json", nvc);
 
-            string content = await resp.Content.ReadAsStringAsync();
-            try
-            {
-                StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
-
-                return status.Status == "Success";
-            }
-            catch (Exception)
-            {
-                throw new Exception(JsonConvert.DeserializeObject<StatusMessage>(content).StatusDescription);
-            }
+            return status.Status == "Success";
         }
     }
 }

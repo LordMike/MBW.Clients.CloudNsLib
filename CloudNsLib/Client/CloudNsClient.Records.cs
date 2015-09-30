@@ -15,39 +15,26 @@ namespace CloudNsLib.Client
     {
         public async Task<List<DnsRecord>> RecordsList(string domainName)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = domainName;
 
-            Uri uri = BuildUri("/dns/records.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
+            string content = await ExecuteGetAsString("/dns/records.json", nvc);
 
-            string content = await resp.Content.ReadAsStringAsync();
-            try
-            {
-                if (content == "[]")
-                    return new List<DnsRecord>();
+            if (content == "[]")
+                return new List<DnsRecord>();
 
-                return JsonConvert.DeserializeObject<Dictionary<int, DnsRecord>>(content).Values.ToList();
-            }
-            catch (Exception)
-            {
-                throw new Exception(JsonConvert.DeserializeObject<StatusMessage>(content).StatusDescription);
-            }
+            return JsonConvert.DeserializeObject<Dictionary<int, DnsRecord>>(content).Values.ToList();
         }
 
         public async Task<bool> RecordsDelete(string domainName, long recordId)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = domainName;
             nvc["record-id"] = recordId.ToString();
 
-            Uri uri = BuildUri("/dns/delete-record.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/delete-record.json", nvc);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -57,7 +44,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> RecordsAlterA(string domainName, long recordId, string host, int ttl, IPAddress address)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = domainName;
             nvc["record-id"] = recordId.ToString();
@@ -71,12 +58,8 @@ namespace CloudNsLib.Client
                 nvc["record-type"] = RecordType.AAAA.ToString();
             else
                 throw new ArgumentException("Address must be IPv4 or IPv6", nameof(address));
-
-            Uri uri = BuildUri("/dns/mod-record.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+            
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -86,7 +69,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> RecordsAlterTxt(string domainName, long recordId, string host, int ttl, string text)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = domainName;
             nvc["record-id"] = recordId.ToString();
@@ -95,11 +78,7 @@ namespace CloudNsLib.Client
             nvc["record"] = text;
             nvc["record-type"] = RecordType.TXT.ToString();
 
-            Uri uri = BuildUri("/dns/mod-record.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -109,7 +88,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> RecordsAlterSpf(string domainName, long recordId, string host, int ttl, string spfRecord)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = domainName;
             nvc["record-id"] = recordId.ToString();
@@ -118,11 +97,7 @@ namespace CloudNsLib.Client
             nvc["record"] = spfRecord;
             nvc["record-type"] = RecordType.TXT.ToString();
 
-            Uri uri = BuildUri("/dns/mod-record.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -132,7 +107,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> RecordsAlterCname(string domainName, long recordId, string host, int ttl, string target)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = domainName;
             nvc["record-id"] = recordId.ToString();
@@ -141,11 +116,7 @@ namespace CloudNsLib.Client
             nvc["record"] = target;
             nvc["record-type"] = RecordType.CNAME.ToString();
 
-            Uri uri = BuildUri("/dns/mod-record.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -155,7 +126,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> RecordsAlterMx(string domainName, long recordId, string host, int ttl, string target, int priority)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = domainName;
             nvc["record-id"] = recordId.ToString();
@@ -165,11 +136,7 @@ namespace CloudNsLib.Client
             nvc["priority"] = priority.ToString();
             nvc["record-type"] = RecordType.MX.ToString();
 
-            Uri uri = BuildUri("/dns/mod-record.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -179,7 +146,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> RecordsAlterNs(string domainName, long recordId, string host, int ttl, string nameserver)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = domainName;
             nvc["record-id"] = recordId.ToString();
@@ -188,11 +155,7 @@ namespace CloudNsLib.Client
             nvc["record"] = nameserver;
             nvc["record-type"] = RecordType.NS.ToString();
 
-            Uri uri = BuildUri("/dns/mod-record.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -202,7 +165,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> RecordsAlterSrv(string domainName, long recordId, string host, int ttl, string value, int priority, int weight, int port)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = domainName;
             nvc["record-id"] = recordId.ToString();
@@ -214,11 +177,7 @@ namespace CloudNsLib.Client
             nvc["port"] = port.ToString();
             nvc["record-type"] = RecordType.SRV.ToString();
 
-            Uri uri = BuildUri("/dns/mod-record.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -228,7 +187,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> RecordsAlterSshfp(string domainName, long recordId, string host, int ttl, string value, SshfpAlgorithm algorithm, SshfpFingerprintType fptype)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = domainName;
             nvc["record-id"] = recordId.ToString();
@@ -239,11 +198,7 @@ namespace CloudNsLib.Client
             nvc["fptype"] = ((int)fptype).ToString();
             nvc["record-type"] = RecordType.SSHFP.ToString();
 
-            Uri uri = BuildUri("/dns/mod-record.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -253,7 +208,7 @@ namespace CloudNsLib.Client
 
         public async Task<long?> RecordsAddA(string domainName, string host, int ttl, IPAddress address)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = domainName;
             nvc["host"] = host;
@@ -266,22 +221,18 @@ namespace CloudNsLib.Client
                 nvc["record-type"] = RecordType.AAAA.ToString();
             else
                 throw new ArgumentException("Address must be IPv4 or IPv6", nameof(address));
-
-            Uri uri = BuildUri("/dns/add-record.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+            
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
-
+            
             return status.Status == "Success" ? status.Data["id"] as long? : null;
         }
 
         public async Task<long?> RecordsAddMx(string domainName, string host, int ttl, string target, int priority)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = domainName;
             nvc["host"] = host;
@@ -290,11 +241,7 @@ namespace CloudNsLib.Client
             nvc["priority"] = priority.ToString();
             nvc["record-type"] = RecordType.MX.ToString();
 
-            Uri uri = BuildUri("/dns/add-record.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -304,7 +251,7 @@ namespace CloudNsLib.Client
 
         public async Task<long?> RecordsAddCname(string domainName, string host, int ttl, string target)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = domainName;
             nvc["host"] = host;
@@ -312,11 +259,7 @@ namespace CloudNsLib.Client
             nvc["record"] = target;
             nvc["record-type"] = RecordType.CNAME.ToString();
 
-            Uri uri = BuildUri("/dns/add-record.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -326,7 +269,7 @@ namespace CloudNsLib.Client
 
         public async Task<long?> RecordsAddTxt(string domainName, string host, int ttl, string text)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = domainName;
             nvc["host"] = host;
@@ -334,11 +277,7 @@ namespace CloudNsLib.Client
             nvc["record"] = text;
             nvc["record-type"] = RecordType.TXT.ToString();
 
-            Uri uri = BuildUri("/dns/add-record.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -348,7 +287,7 @@ namespace CloudNsLib.Client
 
         public async Task<long?> RecordsAddSpf(string domainName, string host, int ttl, string spfRecord)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = domainName;
             nvc["host"] = host;
@@ -356,11 +295,7 @@ namespace CloudNsLib.Client
             nvc["record"] = spfRecord;
             nvc["record-type"] = RecordType.SPF.ToString();
 
-            Uri uri = BuildUri("/dns/add-record.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -370,7 +305,7 @@ namespace CloudNsLib.Client
 
         public async Task<long?> RecordsAddNs(string domainName, string host, int ttl, string nameserver)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = domainName;
             nvc["host"] = host;
@@ -378,11 +313,7 @@ namespace CloudNsLib.Client
             nvc["record"] = nameserver;
             nvc["record-type"] = RecordType.NS.ToString();
 
-            Uri uri = BuildUri("/dns/add-record.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -392,7 +323,7 @@ namespace CloudNsLib.Client
 
         public async Task<long?> RecordsAddSrv(string domainName, string host, int ttl, string value, int priority, int weight, int port)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = domainName;
             nvc["host"] = host;
@@ -403,11 +334,7 @@ namespace CloudNsLib.Client
             nvc["port"] = port.ToString();
             nvc["record-type"] = RecordType.SRV.ToString();
 
-            Uri uri = BuildUri("/dns/add-record.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -417,7 +344,7 @@ namespace CloudNsLib.Client
 
         public async Task<long?> RecordsAddSshfp(string domainName, string host, int ttl, string value, SshfpAlgorithm algorithm, SshfpFingerprintType fptype)
         {
-            NameValueCollection nvc = CreateUri();
+            NameValueCollection nvc = new NameValueCollection();
 
             nvc["domain-name"] = domainName;
             nvc["host"] = host;
@@ -427,11 +354,7 @@ namespace CloudNsLib.Client
             nvc["fptype"] = ((int)fptype).ToString();
             nvc["record-type"] = RecordType.SSHFP.ToString();
 
-            Uri uri = BuildUri("/dns/add-record.json", nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
-
-            string content = await resp.Content.ReadAsStringAsync();
-            StatusMessage status = JsonConvert.DeserializeObject<StatusMessage>(content);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);

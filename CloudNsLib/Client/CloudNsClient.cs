@@ -2,7 +2,9 @@
 using System.Collections.Specialized;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using CloudNsLib.Objects;
+using Newtonsoft.Json;
 
 namespace CloudNsLib.Client
 {
@@ -38,19 +40,15 @@ namespace CloudNsLib.Client
             AuthPassword = authPassword;
             IdType = authType;
         }
-
-        internal NameValueCollection CreateUri()
+        
+        internal void AddAuthentication(NameValueCollection nvc)
         {
-            NameValueCollection nvc = new NameValueCollection();
-
             if (IdType == AuthIdType.MainId)
                 nvc["auth-id"] = AuthId.ToString();
             if (IdType == AuthIdType.SubId)
                 nvc["sub-auth-id"] = AuthId.ToString();
 
             nvc["auth-password"] = AuthPassword;
-
-            return nvc;
         }
 
         private Uri BuildUri(string path, NameValueCollection nvc)
@@ -81,6 +79,34 @@ namespace CloudNsLib.Client
             builder.Query = sb.ToString();
 
             return builder.Uri;
+        }
+
+        private async Task<T> ExecuteGet<T>(string url, NameValueCollection nvc)
+        {
+            AddAuthentication(nvc);
+
+            Uri uri = BuildUri(url, nvc);
+            HttpResponseMessage resp = await _client.GetAsync(uri);
+
+            string content = await resp.Content.ReadAsStringAsync();
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(content);
+            }
+            catch (Exception)
+            {
+                throw new Exception(JsonConvert.DeserializeObject<StatusMessage>(content).StatusDescription);
+            }
+        }
+
+        private async Task<string> ExecuteGetAsString(string url, NameValueCollection nvc)
+        {
+            AddAuthentication(nvc);
+
+            Uri uri = BuildUri(url, nvc);
+            HttpResponseMessage resp = await _client.GetAsync(uri);
+
+            return await resp.Content.ReadAsStringAsync();
         }
     }
 }
