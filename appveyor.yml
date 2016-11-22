@@ -19,6 +19,9 @@ build_script:
     # Tests
 
     dotnet build -c Release src\CloudNsLibTests
+environment:
+  CLOUDNS_API:
+    secure: 45D+okErPGmUgCN5DjXUj1GBOvkFHDWjM63Vs+eh0q4=
 test_script:
 - cmd: dotnet test -c Release src\CloudNsLibTests
 artifacts:
