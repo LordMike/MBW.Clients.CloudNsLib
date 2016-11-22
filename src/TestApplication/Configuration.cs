@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using CloudNsLib.Client;
 
-namespace CloudNsLibTests
+namespace TestApplication
 {
     public static class Configuration
     {
@@ -34,7 +34,7 @@ namespace CloudNsLibTests
                 return new CloudNsClient(authId, inputAuthPass);
             }
 
-            throw new Exception("Unable to get client configuration. Setup Auth.txt or Environment variables. See CloudNsLibTests.Configuration");
+            throw new Exception("Unable to get client configuration. Setup Auth.txt or Environment variables. See TestApplication.Configuration");
         }
     }
 }

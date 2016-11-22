@@ -6,10 +6,10 @@ namespace TestApplication
     {
         static void Main(string[] args)
         {
-            CloudNsClient cl = new CloudNsClient(904, "password");
+            CloudNsClient cl = Configuration.GetClient();
 
             var ab = cl.ListAvailableNameservers().Result;
-            
+
         }
     }
 }

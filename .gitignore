@@ -10,3 +10,6 @@ Nuget/
 
 # Tests
 TestResult.xml
+
+# Specific files
+Auth.txt
