@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using CloudNsLib.Client;
 using CloudNsLib.Objects;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CloudNsLibTests
 {

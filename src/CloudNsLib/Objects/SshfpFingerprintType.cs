@@ -1,8 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
+﻿// ReSharper disable InconsistentNaming
 namespace CloudNsLib.Objects
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum SshfpFingerprintType
     {
         SHA1 = 1,
