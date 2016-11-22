@@ -85,9 +85,9 @@ namespace CloudNsLib.Client
             AddAuthentication(nvc);
 
             Uri uri = BuildUri(url, nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
+            HttpResponseMessage resp = await _client.GetAsync(uri).ConfigureAwait(false);
 
-            string content = await resp.Content.ReadAsStringAsync();
+            string content = await resp.Content.ReadAsStringAsync().ConfigureAwait(false);
             try
             {
                 return JsonConvert.DeserializeObject<T>(content);
@@ -103,9 +103,9 @@ namespace CloudNsLib.Client
             AddAuthentication(nvc);
 
             Uri uri = BuildUri(url, nvc);
-            HttpResponseMessage resp = await _client.GetAsync(uri);
+            HttpResponseMessage resp = await _client.GetAsync(uri).ConfigureAwait(false);
 
-            return await resp.Content.ReadAsStringAsync();
+            return await resp.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
     }
 }
