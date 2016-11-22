@@ -6,7 +6,7 @@ namespace TestApplication
     {
         static void Main(string[] args)
         {
-            CloudNsClient cl = new CloudNsClient(513, "password");
+            CloudNsClient cl = new CloudNsClient(904, "password");
 
             var ab = cl.ListAvailableNameservers().Result;
             
