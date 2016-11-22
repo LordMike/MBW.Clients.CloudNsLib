@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 namespace CloudNsLib.Utilities
 {
-    internal class NameValueCollection : IEnumerable<KeyValuePair<string, string[]>>
+    internal class QueryStringParameters : IEnumerable<KeyValuePair<string, string[]>>
     {
         private readonly Dictionary<string, string[]> _internal;
 
-        public NameValueCollection()
+        public QueryStringParameters()
         {
             _internal = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
         }

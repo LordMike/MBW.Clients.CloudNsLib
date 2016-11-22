@@ -16,7 +16,7 @@ namespace CloudNsLib.Client
     {
         public async Task<List<DnsRecord>> RecordsList(string domainName)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = domainName;
 
@@ -30,7 +30,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> RecordsDelete(string domainName, long recordId)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = domainName;
             nvc["record-id"] = recordId.ToString();
@@ -45,7 +45,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> RecordsAlterA(string domainName, long recordId, string host, int ttl, IPAddress address)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = domainName;
             nvc["record-id"] = recordId.ToString();
@@ -70,7 +70,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> RecordsAlterTxt(string domainName, long recordId, string host, int ttl, string text)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = domainName;
             nvc["record-id"] = recordId.ToString();
@@ -89,7 +89,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> RecordsAlterSpf(string domainName, long recordId, string host, int ttl, string spfRecord)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = domainName;
             nvc["record-id"] = recordId.ToString();
@@ -108,7 +108,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> RecordsAlterCname(string domainName, long recordId, string host, int ttl, string target)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = domainName;
             nvc["record-id"] = recordId.ToString();
@@ -127,7 +127,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> RecordsAlterMx(string domainName, long recordId, string host, int ttl, string target, int priority)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = domainName;
             nvc["record-id"] = recordId.ToString();
@@ -147,7 +147,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> RecordsAlterNs(string domainName, long recordId, string host, int ttl, string nameserver)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = domainName;
             nvc["record-id"] = recordId.ToString();
@@ -166,7 +166,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> RecordsAlterSrv(string domainName, long recordId, string host, int ttl, string value, int priority, int weight, int port)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = domainName;
             nvc["record-id"] = recordId.ToString();
@@ -188,7 +188,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> RecordsAlterSshfp(string domainName, long recordId, string host, int ttl, string value, SshfpAlgorithm algorithm, SshfpFingerprintType fptype)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = domainName;
             nvc["record-id"] = recordId.ToString();
@@ -209,7 +209,7 @@ namespace CloudNsLib.Client
 
         public async Task<long?> RecordsAddA(string domainName, string host, int ttl, IPAddress address)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = domainName;
             nvc["host"] = host;
@@ -233,7 +233,7 @@ namespace CloudNsLib.Client
 
         public async Task<long?> RecordsAddMx(string domainName, string host, int ttl, string target, int priority)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = domainName;
             nvc["host"] = host;
@@ -252,7 +252,7 @@ namespace CloudNsLib.Client
 
         public async Task<long?> RecordsAddCname(string domainName, string host, int ttl, string target)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = domainName;
             nvc["host"] = host;
@@ -270,7 +270,7 @@ namespace CloudNsLib.Client
 
         public async Task<long?> RecordsAddTxt(string domainName, string host, int ttl, string text)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = domainName;
             nvc["host"] = host;
@@ -288,7 +288,7 @@ namespace CloudNsLib.Client
 
         public async Task<long?> RecordsAddSpf(string domainName, string host, int ttl, string spfRecord)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = domainName;
             nvc["host"] = host;
@@ -306,7 +306,7 @@ namespace CloudNsLib.Client
 
         public async Task<long?> RecordsAddNs(string domainName, string host, int ttl, string nameserver)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = domainName;
             nvc["host"] = host;
@@ -324,7 +324,7 @@ namespace CloudNsLib.Client
 
         public async Task<long?> RecordsAddSrv(string domainName, string host, int ttl, string value, int priority, int weight, int port)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = domainName;
             nvc["host"] = host;
@@ -345,7 +345,7 @@ namespace CloudNsLib.Client
 
         public async Task<long?> RecordsAddSshfp(string domainName, string host, int ttl, string value, SshfpAlgorithm algorithm, SshfpFingerprintType fptype)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = domainName;
             nvc["host"] = host;

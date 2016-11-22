@@ -43,7 +43,7 @@ namespace CloudNsLib.Client
             IdType = authType;
         }
 
-        internal void AddAuthentication(NameValueCollection nvc)
+        internal void AddAuthentication(QueryStringParameters nvc)
         {
             if (IdType == AuthIdType.MainId)
                 nvc["auth-id"] = AuthId.ToString();
@@ -53,7 +53,7 @@ namespace CloudNsLib.Client
             nvc["auth-password"] = AuthPassword;
         }
 
-        private Uri BuildUri(string path, NameValueCollection nvc)
+        private Uri BuildUri(string path, QueryStringParameters nvc)
         {
             StringBuilder sb = new StringBuilder();
             
@@ -80,7 +80,7 @@ namespace CloudNsLib.Client
             return builder.Uri;
         }
 
-        private async Task<T> ExecuteGet<T>(string url, NameValueCollection nvc)
+        private async Task<T> ExecuteGet<T>(string url, QueryStringParameters nvc)
         {
             AddAuthentication(nvc);
 
@@ -98,7 +98,7 @@ namespace CloudNsLib.Client
             }
         }
 
-        private async Task<string> ExecuteGetAsString(string url, NameValueCollection nvc)
+        private async Task<string> ExecuteGetAsString(string url, QueryStringParameters nvc)
         {
             AddAuthentication(nvc);
 

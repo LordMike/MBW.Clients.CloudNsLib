@@ -15,12 +15,12 @@ namespace CloudNsLib.Client
     {
         public async Task<List<AvailableNameserver>> ListAvailableNameservers()
         {
-            return await ExecuteGet<List<AvailableNameserver>>("/dns/available-name-servers.json", new NameValueCollection());
+            return await ExecuteGet<List<AvailableNameserver>>("/dns/available-name-servers.json", new QueryStringParameters());
         }
 
         internal async Task<List<ListZone>> GetZoneList(string search, int page, int rowsPrPage)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
             
             nvc["page"] = page.ToString();
             nvc["rows-per-page"] = rowsPrPage.ToString();
@@ -38,7 +38,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> IsZoneUpdated(string domainName)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = domainName;
 
@@ -47,7 +47,7 @@ namespace CloudNsLib.Client
 
         public async Task<List<ZoneUpdateStatus>> GetUpdateStatus(string domainName)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = domainName;
 
@@ -56,7 +56,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> CreateMasterZone(string zoneName, List<string> masterServers = null)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = zoneName;
             nvc["zone-type"] = "master";
@@ -79,7 +79,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> CreateSlaveZone(string zoneName, IPAddress masterServer)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = zoneName;
             nvc["zone-type"] = "slave";
@@ -97,7 +97,7 @@ namespace CloudNsLib.Client
 
         public async Task<bool> DeleteZone(string zoneName)
         {
-            NameValueCollection nvc = new NameValueCollection();
+            QueryStringParameters nvc = new QueryStringParameters();
 
             nvc["domain-name"] = zoneName;
 
