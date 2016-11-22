@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CloudNsLib.Objects;
+using CloudNsLib.Utilities;
 using Newtonsoft.Json;
 
 namespace CloudNsLib.Client

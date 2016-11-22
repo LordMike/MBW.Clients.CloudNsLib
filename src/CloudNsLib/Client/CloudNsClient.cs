@@ -1,16 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using CloudNsLib.Objects;
+using CloudNsLib.Utilities;
 using Newtonsoft.Json;
 
 namespace CloudNsLib.Client
 {
     public partial class CloudNsClient
     {
-        public static Uri DefaultUri = new Uri("https://api.cloudns.net/");
+        public static readonly Uri DefaultUri = new Uri("https://api.cloudns.net/");
 
         public Uri EndPoint => _client.BaseAddress;
 
@@ -40,7 +42,7 @@ namespace CloudNsLib.Client
             AuthPassword = authPassword;
             IdType = authType;
         }
-        
+
         internal void AddAuthentication(NameValueCollection nvc)
         {
             if (IdType == AuthIdType.MainId)
@@ -54,21 +56,18 @@ namespace CloudNsLib.Client
         private Uri BuildUri(string path, NameValueCollection nvc)
         {
             StringBuilder sb = new StringBuilder();
-
-            for (int i = 0; i < nvc.Count; i++)
+            
+            foreach (KeyValuePair<string, string[]> pair in nvc)
             {
-                string key = nvc.GetKey(i);
-                string[] vals = nvc.GetValues(i);
-
-                if (vals == null)
+                if (pair.Value == null)
                     continue;
 
-                foreach (string val in vals)
+                foreach (string val in pair.Value)
                 {
-                    if (i > 0)
+                    if (sb.Length > 0)
                         sb.Append("&");
 
-                    sb.Append(key);
+                    sb.Append(pair.Key);
                     sb.Append("=");
                     sb.Append(Uri.EscapeUriString(val));
                 }
