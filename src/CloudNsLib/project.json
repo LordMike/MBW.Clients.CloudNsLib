@@ -1,5 +1,25 @@
 {
-  "version": "1.0.0-*",
+  "version": "0.2.4-alpha",
+
+  "title": "CloudNsLib",
+  "description": "Client library for ClouDNS.net",
+  "authors": [ "LordMike" ],
+
+  "packOptions": {
+    "owners": [ "LordMike" ],
+    "tags": [ "ClouDNS" ],
+    "projectUrl": "https://github.com/lordmike/cloudnslib",
+    "licenseUrl": "https://github.com/lordmike/cloudnslib/blob/master/LICENSE.txt",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/lordmike/cloudnslib"
+    }
+  },
+
+  "buildOptions": {
+    "publicSign": true,
+    "keyFile": "../../SigningKey.snk"
+  },
 
   "dependencies": {
     "NETStandard.Library": "1.6.0",

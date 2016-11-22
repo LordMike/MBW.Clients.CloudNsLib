@@ -7,7 +7,7 @@
   },
 
   "dependencies": {
-    "CloudNsLib": "1.0.0-*"
+    "CloudNsLib": "0.2.4-alpha"
   },
 
   "frameworks": {
