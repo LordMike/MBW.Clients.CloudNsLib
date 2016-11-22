@@ -9,32 +9,25 @@ namespace TestApplication
     {
         public static CloudNsClient GetClient()
         {
-            string inputAuthId = Environment.GetEnvironmentVariable("CLOUDNS_AUTHID");
-            string inputAuthPass = Environment.GetEnvironmentVariable("CLOUDNS_AUTHPASS");
+            // Try from ENV
+            string input = Environment.GetEnvironmentVariable("CLOUDNS_API");
 
-            if (!string.IsNullOrEmpty(inputAuthId) && !string.IsNullOrEmpty(inputAuthPass))
+            // Try from file
+            if (string.IsNullOrEmpty(input))
             {
-                int authId = int.Parse(inputAuthId);
+                FileInfo file = new FileInfo(@"..\..\Auth.txt");
 
-                return new CloudNsClient(authId, inputAuthPass);
+                if (file.Exists)
+                    input = File.ReadLines(file.FullName).First();
             }
 
-            FileInfo file = new FileInfo(@"..\..\Auth.txt");
+            if (string.IsNullOrEmpty(input))
+                throw new Exception("Unable to get client configuration. Setup Auth.txt or Environment variables. See CloudNsLibTests.Configuration");
 
-            if (file.Exists)
-            {
-                string line = File.ReadLines(file.FullName).First();
-                string[] splits = line.Split(':');
+            string[] splits = input.Split(':');
+            int authId = int.Parse(splits[0]);
 
-                inputAuthId = splits[0];
-                inputAuthPass = splits[1];
-
-                int authId = int.Parse(inputAuthId);
-
-                return new CloudNsClient(authId, inputAuthPass);
-            }
-
-            throw new Exception("Unable to get client configuration. Setup Auth.txt or Environment variables. See TestApplication.Configuration");
+            return new CloudNsClient(authId, splits[1]);
         }
     }
 }
