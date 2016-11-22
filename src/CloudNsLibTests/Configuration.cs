@@ -4,7 +4,7 @@ namespace CloudNsLibTests
 {
     public static class Configuration
     {
-        private const int AuthId = 513;
+        private const int AuthId = 904;
         private const string AuthPass = "password";
 
         public static CloudNsClient GetClient()
