@@ -42,6 +42,7 @@ namespace CloudNsLib.Utilities
             {
                 Array.Resize(ref internalVal, internalVal.Length + 1);
                 internalVal[internalVal.Length - 1] = value;
+                _internal[key] = internalVal;
             }
         }
     }
