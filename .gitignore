@@ -1,7 +1,12 @@
-*.user
-[Bb]in
-[Dd]ebug*/
+bin/
 obj/
 
-packages/
 *.suo
+*.user
+*.lock.json
+
+.vs/
+Nuget/
+
+# Tests
+TestResult.xml
