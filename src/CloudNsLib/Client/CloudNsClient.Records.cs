@@ -20,7 +20,7 @@ namespace CloudNsLib.Client
 
             nvc["domain-name"] = domainName;
 
-            string content = await ExecuteGetAsString("/dns/records.json", nvc);
+            string content = await ExecuteGetAsString("/dns/records.json", nvc).ConfigureAwait(false);
 
             if (content == "[]")
                 return new List<DnsRecord>();
@@ -35,7 +35,7 @@ namespace CloudNsLib.Client
             nvc["domain-name"] = domainName;
             nvc["record-id"] = recordId.ToString();
 
-            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/delete-record.json", nvc);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/delete-record.json", nvc).ConfigureAwait(false);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -60,7 +60,7 @@ namespace CloudNsLib.Client
             else
                 throw new ArgumentException("Address must be IPv4 or IPv6", nameof(address));
             
-            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc).ConfigureAwait(false);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -79,7 +79,7 @@ namespace CloudNsLib.Client
             nvc["record"] = text;
             nvc["record-type"] = RecordType.TXT.ToString();
 
-            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc).ConfigureAwait(false);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -98,7 +98,7 @@ namespace CloudNsLib.Client
             nvc["record"] = spfRecord;
             nvc["record-type"] = RecordType.TXT.ToString();
 
-            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc).ConfigureAwait(false);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -117,7 +117,7 @@ namespace CloudNsLib.Client
             nvc["record"] = target;
             nvc["record-type"] = RecordType.CNAME.ToString();
 
-            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc).ConfigureAwait(false);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -137,7 +137,7 @@ namespace CloudNsLib.Client
             nvc["priority"] = priority.ToString();
             nvc["record-type"] = RecordType.MX.ToString();
 
-            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc).ConfigureAwait(false);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -156,7 +156,7 @@ namespace CloudNsLib.Client
             nvc["record"] = nameserver;
             nvc["record-type"] = RecordType.NS.ToString();
 
-            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc).ConfigureAwait(false);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -178,7 +178,7 @@ namespace CloudNsLib.Client
             nvc["port"] = port.ToString();
             nvc["record-type"] = RecordType.SRV.ToString();
 
-            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc).ConfigureAwait(false);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -199,7 +199,7 @@ namespace CloudNsLib.Client
             nvc["fptype"] = ((int)fptype).ToString();
             nvc["record-type"] = RecordType.SSHFP.ToString();
 
-            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/mod-record.json", nvc).ConfigureAwait(false);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -223,7 +223,7 @@ namespace CloudNsLib.Client
             else
                 throw new ArgumentException("Address must be IPv4 or IPv6", nameof(address));
             
-            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc).ConfigureAwait(false);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -242,7 +242,7 @@ namespace CloudNsLib.Client
             nvc["priority"] = priority.ToString();
             nvc["record-type"] = RecordType.MX.ToString();
 
-            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc).ConfigureAwait(false);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -260,7 +260,7 @@ namespace CloudNsLib.Client
             nvc["record"] = target;
             nvc["record-type"] = RecordType.CNAME.ToString();
 
-            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc).ConfigureAwait(false);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -278,7 +278,7 @@ namespace CloudNsLib.Client
             nvc["record"] = text;
             nvc["record-type"] = RecordType.TXT.ToString();
 
-            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc).ConfigureAwait(false);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -296,7 +296,7 @@ namespace CloudNsLib.Client
             nvc["record"] = spfRecord;
             nvc["record-type"] = RecordType.SPF.ToString();
 
-            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc).ConfigureAwait(false);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -314,7 +314,7 @@ namespace CloudNsLib.Client
             nvc["record"] = nameserver;
             nvc["record-type"] = RecordType.NS.ToString();
 
-            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc).ConfigureAwait(false);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -335,7 +335,7 @@ namespace CloudNsLib.Client
             nvc["port"] = port.ToString();
             nvc["record-type"] = RecordType.SRV.ToString();
 
-            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc).ConfigureAwait(false);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);
@@ -355,7 +355,7 @@ namespace CloudNsLib.Client
             nvc["fptype"] = ((int)fptype).ToString();
             nvc["record-type"] = RecordType.SSHFP.ToString();
 
-            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/add-record.json", nvc).ConfigureAwait(false);
 
             if (status.Status == "Failed")
                 throw new Exception(status.StatusDescription);

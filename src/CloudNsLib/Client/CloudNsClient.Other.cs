@@ -15,7 +15,7 @@ namespace CloudNsLib.Client
     {
         public async Task<List<AvailableNameserver>> ListAvailableNameservers()
         {
-            return await ExecuteGet<List<AvailableNameserver>>("/dns/available-name-servers.json", new QueryStringParameters());
+            return await ExecuteGet<List<AvailableNameserver>>("/dns/available-name-servers.json", new QueryStringParameters()).ConfigureAwait(false);
         }
 
         internal async Task<List<ListZone>> GetZoneList(string search, int page, int rowsPrPage)
@@ -28,7 +28,7 @@ namespace CloudNsLib.Client
             if (!string.IsNullOrWhiteSpace(search))
                 nvc["search"] = search;
 
-            return await ExecuteGet<List<ListZone>>("/dns/list-zones.json", nvc);
+            return await ExecuteGet<List<ListZone>>("/dns/list-zones.json", nvc).ConfigureAwait(false);
         }
 
         public ZoneIterator ListZones(string search = null)
@@ -42,7 +42,7 @@ namespace CloudNsLib.Client
 
             nvc["domain-name"] = domainName;
 
-            return await ExecuteGet<bool>("/dns/is-updated.json", nvc);
+            return await ExecuteGet<bool>("/dns/is-updated.json", nvc).ConfigureAwait(false);
         }
 
         public async Task<List<ZoneUpdateStatus>> GetUpdateStatus(string domainName)
@@ -51,7 +51,7 @@ namespace CloudNsLib.Client
 
             nvc["domain-name"] = domainName;
 
-            return await ExecuteGet<List<ZoneUpdateStatus>>("/dns/update-status.json", nvc);
+            return await ExecuteGet<List<ZoneUpdateStatus>>("/dns/update-status.json", nvc).ConfigureAwait(false);
         }
 
         public async Task<bool> CreateMasterZone(string zoneName, List<string> masterServers = null)
@@ -72,7 +72,7 @@ namespace CloudNsLib.Client
                     nvc["ns[]"] = string.Empty;
             }
 
-            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/register.json", nvc);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/register.json", nvc).ConfigureAwait(false);
 
             return status.Status == "Success";
         }
@@ -85,14 +85,14 @@ namespace CloudNsLib.Client
             nvc["zone-type"] = "slave";
             nvc["master-ip"] = masterServer.ToString();
 
-            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/register.json", nvc);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/register.json", nvc).ConfigureAwait(false);
 
             return status.Status == "Success";
         }
 
         public async Task<bool> DeleteZone(ListZone zone)
         {
-            return await DeleteZone(zone.Name);
+            return await DeleteZone(zone.Name).ConfigureAwait(false);
         }
 
         public async Task<bool> DeleteZone(string zoneName)
@@ -101,7 +101,7 @@ namespace CloudNsLib.Client
 
             nvc["domain-name"] = zoneName;
 
-            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/delete.json", nvc);
+            StatusMessage status = await ExecuteGet<StatusMessage>("/dns/delete.json", nvc).ConfigureAwait(false);
 
             return status.Status == "Success";
         }
