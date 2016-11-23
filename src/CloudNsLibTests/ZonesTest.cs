@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using CloudNsLib.Client;
 using CloudNsLib.Objects;
 using Xunit;
 
 namespace CloudNsLibTests
 {
-    public class ZonesTest :IDisposable
+    public class ZonesTest : IDisposable
     {
         private const string TestZoneNameSuffix = "-cloudnslib-automated-test.org";
         private static readonly CloudNsClient Client = Configuration.GetClient();
@@ -27,33 +28,33 @@ namespace CloudNsLibTests
         }
 
         [Fact]
-        public void TestMasterZoneCreateMultipleNs()
+        public async Task TestMasterZoneCreateMultipleNs()
         {
             List<string> nameservers = new List<string> { "google.dk", "test.dk" };
             const string name = "multiplens" + TestZoneNameSuffix;
 
             // Create
-            Assert.True(Client.CreateMasterZone(name, nameservers).Result);
+            Assert.True(await Client.CreateMasterZone(name, nameservers));
 
             // Ensure we have all the NS
-            List<DnsRecord> recs = Client.RecordsList(name).Result;
+            List<DnsRecord> recs = await Client.RecordsList(name);
             List<DnsRecord> ns = recs.Where(s => s.Type == RecordType.NS).ToList();
 
             Assert.Equal(nameservers.Count, ns.Count);
             Assert.True(nameservers.All(s => recs.Any(x => x.Record == s.ToString())));
 
             // Delete zone
-            Assert.True(Client.DeleteZone(name).Result);
+            Assert.True(await Client.DeleteZone(name));
         }
 
         [Fact]
-        public void TestMasterZoneCreate()
+        public async Task TestMasterZoneCreate()
         {
-            string[] names = Enumerable.Range(1, 20).Select(s => "test-master" + s + TestZoneNameSuffix).ToArray();
+            string[] names = Enumerable.Range(1, 10).Select(s => "test-master" + s + TestZoneNameSuffix).ToArray();
 
-            // Create 20 zones
+            // Create 10 zones
             foreach (string name in names)
-                Assert.True(Client.CreateMasterZone(name).Result);
+                Assert.True(await Client.CreateMasterZone(name));
 
             // Fetch list
             List<ListZone> created = Client.ListZones().ToList();
@@ -65,7 +66,7 @@ namespace CloudNsLibTests
 
             // Delete all
             foreach (string name in names)
-                Assert.True(Client.DeleteZone(name).Result);
+                Assert.True(await Client.DeleteZone(name));
 
             // Fetch list
             List<ListZone> deleted = Client.ListZones().ToList();
@@ -75,14 +76,14 @@ namespace CloudNsLibTests
         }
 
         [Fact]
-        public void TestSlaveZoneCreate()
+        public async Task TestSlaveZoneCreate()
         {
             IPAddress testServer = IPAddress.Parse("127.0.0.1");
-            string[] names = Enumerable.Range(1, 20).Select(s => "testslave" + s + TestZoneNameSuffix).ToArray();
+            string[] names = Enumerable.Range(1, 10).Select(s => "testslave" + s + TestZoneNameSuffix).ToArray();
 
-            // Create 20 zones
+            // Create 10 zones
             foreach (string name in names)
-                Assert.True(Client.CreateSlaveZone(name, testServer).Result);
+                Assert.True(await Client.CreateSlaveZone(name, testServer));
 
             // Fetch list
             List<ListZone> created = Client.ListZones().ToList();
@@ -94,7 +95,7 @@ namespace CloudNsLibTests
 
             // Delete all
             foreach (string name in names)
-                Assert.True(Client.DeleteZone(name).Result);
+                Assert.True(await Client.DeleteZone(name));
 
             // Fetch list
             List<ListZone> deleted = Client.ListZones().ToList();
