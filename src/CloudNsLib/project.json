@@ -1,5 +1,5 @@
 {
-  "version": "0.2.4-alpha",
+  "version": "0.3.0",
 
   "title": "CloudNsLib",
   "description": "Client library for ClouDNS.net",
