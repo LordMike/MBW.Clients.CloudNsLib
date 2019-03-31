@@ -1,15 +1,4 @@
+.vs/
 bin/
 obj/
-
-*.suo
 *.user
-*.lock.json
-
-.vs/
-Nuget/
-
-# Tests
-TestResult.xml
-
-# Specific files
-Auth.txt
